@@ -8,7 +8,8 @@ class Player;
 class Game
 {
 public:
-    Game(std::unique_ptr<Player> playerX, std::unique_ptr<Player> playerO);
+    explicit Game(std::unique_ptr<Player> playerX,
+    		std::unique_ptr<Player> playerO);
     void run();
 private:
     std::unique_ptr<GameBoard> m_board;

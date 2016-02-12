@@ -7,7 +7,7 @@ class Move;
 class Player
 {
 public:
-	Player();
+	explicit Player();
 	virtual ~Player();
     virtual Move nextMove(const GameBoard& board)=0;
 };

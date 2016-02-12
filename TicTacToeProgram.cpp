@@ -11,11 +11,9 @@ int main(int argc, char** argv)
 {
     unique_ptr<Player> human{new HumanPlayer};
     unique_ptr<Player> ai{new AiPlayer};
-    unique_ptr<Game> game{new Game{std::move(human), std::move(ai)}};
+    Game game{std::move(human), std::move(ai)};
 
-    //while (!game.isOver())
-    //{
-    //}
+    game.run();
 
     return 0;
 }

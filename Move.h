@@ -8,10 +8,12 @@
 #ifndef MOVE_H_
 #define MOVE_H_
 
-class Move {
-public:
-	Move();
-	virtual ~Move();
+struct Move final {
+	explicit Move(int x, int y, bool playerX);
+	~Move();
+	int x;
+	int y;
+	bool playerX;
 };
 
 #endif /* MOVE_H_ */

@@ -13,7 +13,7 @@ class GameBoard;
 
 class HumanPlayer: public Player {
 public:
-	HumanPlayer();
+	explicit HumanPlayer();
 	virtual ~HumanPlayer();
 	virtual Move nextMove(const GameBoard& board);
 };

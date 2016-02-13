@@ -11,6 +11,13 @@ public:
     explicit Game(std::unique_ptr<Player> playerX,
     		std::unique_ptr<Player> playerO);
     void run();
+    enum EndState
+	{
+    	notOver,
+    	xwin,
+		owin,
+		tie
+	};
 private:
     std::unique_ptr<GameBoard> m_board;
     std::unique_ptr<Player> m_playerX;

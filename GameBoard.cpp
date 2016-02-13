@@ -11,6 +11,8 @@
 #include "Move.h"
 using namespace std;
 
+constexpr unsigned int GameBoard::winStates[];
+
 GameBoard::GameBoard() : xstate(0), ostate(0)
 {
 }
@@ -23,6 +25,28 @@ bool GameBoard::isFree(int x, int y) const {
 	assert(x >= 0 && x <= 2 && y >= 0 && y <= 2);
 
 	return (get(x, y) == ' ');
+}
+
+Game::EndState GameBoard::endState() const
+{
+	for (auto pattern : winStates)
+	{
+		if ((xstate & pattern) == pattern)
+		{
+			return Game::EndState::xwin;
+		}
+		else if ((ostate & pattern) == pattern)
+		{
+			return Game::EndState::owin;
+		}
+	}
+
+	if ((xstate | ostate) == tieState)
+	{
+		return Game::tie;
+	}
+
+	return Game::notOver;
 }
 
 bool GameBoard::makeMove(const Move& playerMove) {
@@ -62,11 +86,11 @@ char GameBoard::get(int x, int y) const
 ostream& GameBoard::print(ostream& stream) const
 {
 	return stream
-				<< " " << get(0, 0) << " | " << get(0, 1) << " | " << get(0, 2)
+				<< " " << get(0, 0) << " | " << get(1, 0) << " | " << get(2, 0)
 				<< endl << "-----------" << endl
-				<< " " << get(1, 0) << " | " << get(1, 1) << " | " << get(1, 2)
+				<< " " << get(0, 1) << " | " << get(1, 1) << " | " << get(2, 1)
 				<< endl << "-----------" << endl
-				<< " " << get(2, 0) << " | " << get(2, 1) << " | " << get(2, 2)
+				<< " " << get(0, 2) << " | " << get(1, 2) << " | " << get(2, 2)
                 << endl;
 }
 

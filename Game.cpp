@@ -17,20 +17,28 @@ void Game::run()
 {
     auto currentPlayer = m_playerX.get();
 
-    while (!isOver)
+    while (m_board->endState() == notOver)
     {
         // Let the current player make their move
         m_board->makeMove((currentPlayer->nextMove(*m_board.get())));
-
-        // Check if anyone won
-        //updateGameOver();
 
         // Next player's turn
         currentPlayer = currentPlayer == m_playerX.get() ? m_playerO.get() : m_playerX.get();
     }
 
-    // Display victory or defeat message
-
     // Game is over, display final state
     cout << "Final game state:" << endl << *m_board.get();
+
+    // Display victory or defeat message
+    switch (m_board->endState())
+    {
+    case xwin:
+    	cout << "Player X wins!" << endl;
+    	break;
+    case owin:
+    	cout << "Player O wins!" << endl;
+    	break;
+    default:
+    	cout << "Game ended in a tie" << endl;
+    }
 }

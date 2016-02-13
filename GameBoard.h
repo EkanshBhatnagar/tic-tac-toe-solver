@@ -19,7 +19,9 @@ public:
 	bool makeMove(const Move& playerMove);
 	std::ostream& print(std::ostream& stream) const;
 private:
-	char state[9];
+	unsigned int xstate;
+	unsigned int ostate;
+	char get(int x, int y) const;
 };
 
 std::ostream& operator<< (std::ostream& stream, const GameBoard& board);

@@ -9,16 +9,40 @@
 #include <ostream>
 #include "GameBoard.h"
 #include "Move.h"
+#include "Types.h"
 using namespace std;
 
 constexpr unsigned int GameBoard::winStates[];
 
-GameBoard::GameBoard() : xstate(0), ostate(0)
+// Helper functions for this file only
+static int countOnes(unsigned int value);
+
+GameBoard::GameBoard() : xstate{0}, ostate{0}
 {
 }
 
-GameBoard::~GameBoard() {
+GameBoard::GameBoard(unsigned int xstate, unsigned int ostate)
+	: xstate{xstate}, ostate{ostate}
+{
+}
+
+GameBoard::~GameBoard()
+{
 	// TODO Auto-generated destructor stub
+}
+
+ttt::Player GameBoard::currentPlayer() const
+{
+	/* X always goes first, so if the number of filled spaces
+	 * is even, it's X's turn, otherwise O's. */
+	if (countOnes(xstate | ostate) % 2 == 0)
+	{
+		return ttt::Player::XPlayer;
+	}
+	else
+	{
+		return ttt::Player::OPlayer;
+	}
 }
 
 bool GameBoard::isFree(int x, int y) const {
@@ -27,26 +51,28 @@ bool GameBoard::isFree(int x, int y) const {
 	return (get(x, y) == ' ');
 }
 
-Game::EndState GameBoard::endState() const
+
+
+ttt::EndState GameBoard::endState() const
 {
 	for (auto pattern : winStates)
 	{
 		if ((xstate & pattern) == pattern)
 		{
-			return Game::EndState::xwin;
+			return ttt::EndState::XWin;
 		}
 		else if ((ostate & pattern) == pattern)
 		{
-			return Game::EndState::owin;
+			return ttt::EndState::OWin;
 		}
 	}
 
 	if ((xstate | ostate) == tieState)
 	{
-		return Game::tie;
+		return ttt::EndState::Tie;
 	}
 
-	return Game::notOver;
+	return ttt::EndState::NotOver;
 }
 
 bool GameBoard::makeMove(const Move& playerMove) {
@@ -55,7 +81,7 @@ bool GameBoard::makeMove(const Move& playerMove) {
 		return false;
 	}
 
-	if (playerMove.playerX)
+	if (currentPlayer() == ttt::Player::XPlayer)
 	{
 		xstate |= (1 << (playerMove.x + playerMove.y * 3));
 	}
@@ -94,7 +120,23 @@ ostream& GameBoard::print(ostream& stream) const
                 << endl;
 }
 
+// Non-member functions
 ostream& operator<< (ostream& stream, const GameBoard& board)
 {
 	return board.print(stream);
+}
+
+// Static, non-member helper functions for this file only
+int countOnes(unsigned int value)
+{
+	auto count = 0;
+	for (size_t i = 0; i < sizeof(value) * 8; ++i)
+	{
+		if ((value & 1) == 1)
+		{
+			++count;
+		}
+		value >>= 1;
+	}
+	return count;
 }

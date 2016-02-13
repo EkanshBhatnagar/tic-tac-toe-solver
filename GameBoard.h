@@ -9,7 +9,8 @@
 #define GAMEBOARD_H_
 
 #include <iosfwd>
-#include "Game.h" // for Game::EndState
+#include <list>
+#include "Types.h"
 class Move;
 
 class GameBoard final {
@@ -20,7 +21,8 @@ public:
 	bool makeMove(const Move& playerMove);
 	std::ostream& print(std::ostream& stream) const;
 	char get(int x, int y) const;
-	Game::EndState endState() const;
+	ttt::EndState endState() const;
+	ttt::Player currentPlayer() const;
 private:
 	unsigned int xstate;
 	unsigned int ostate;
@@ -39,6 +41,7 @@ private:
 			1 << 2 | 1 << 4 | 1 << 6  // **1 *1* 1**
 	};
 	static const unsigned int tieState = 511; // 111 111 111
+	explicit GameBoard(unsigned int xstate, unsigned int ostate);
 };
 
 std::ostream& operator<< (std::ostream& stream, const GameBoard& board);

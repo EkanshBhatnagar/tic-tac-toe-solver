@@ -7,5 +7,8 @@
 
 #include "Player.h"
 
-Player::Player() {}
+Player::Player(bool playerX) : playerX{playerX}
+{
+}
+
 Player::~Player() {}

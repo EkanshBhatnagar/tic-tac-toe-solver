@@ -10,7 +10,7 @@
 
 Move::Move(int x, int y, bool playerX) : x{x}, y{y}, playerX{playerX}
 {
-	assert(x > 0 && x <= 2 && y > 0 && y <= 2);
+	assert(x >= 0 && x <= 2 && y >= 0 && y <= 2);
 }
 
 Move::~Move() {

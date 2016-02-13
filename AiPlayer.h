@@ -12,7 +12,7 @@
 
 class AiPlayer: public Player {
 public:
-	explicit AiPlayer();
+	explicit AiPlayer(bool playerX);
 	virtual ~AiPlayer();
 	virtual Move nextMove(const GameBoard& board);
 };

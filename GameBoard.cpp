@@ -23,20 +23,18 @@ GameBoard::~GameBoard() {
 }
 
 bool GameBoard::isFree(int x, int y) const {
-	assert(x > 0 && x <= 2 && y > 0 && y <= 2);
+	assert(x >= 0 && x <= 2 && y >= 0 && y <= 2);
 
 	return state[x + y * 3] == ' ';
 }
 
 bool GameBoard::makeMove(const Move& playerMove) {
-
-
 	if (!isFree(playerMove.x, playerMove.y))
 	{
 		return false;
 	}
 
-	state[playerMove.x + playerMove.y * 3] = playerMove.playerX ? 'X' : 'Y';
+	state[playerMove.x + playerMove.y * 3] = playerMove.playerX ? 'X' : 'O';
 	return true;
 }
 

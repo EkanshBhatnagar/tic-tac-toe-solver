@@ -9,17 +9,15 @@
 #include "Move.h"
 #include "GameBoard.h"
 
-AiPlayer::AiPlayer() {
-	// TODO Auto-generated constructor stub
-
+AiPlayer::AiPlayer(bool playerX) : Player{playerX}
+{
 }
 
-AiPlayer::~AiPlayer() {
-	// TODO Auto-generated destructor stub
+AiPlayer::~AiPlayer()
+{
 }
 
 Move AiPlayer::nextMove(const GameBoard& board)
 {
-
 }
 

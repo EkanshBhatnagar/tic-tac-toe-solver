@@ -7,9 +7,11 @@ class Move;
 class Player
 {
 public:
-	explicit Player();
+	explicit Player(bool playerX);
 	virtual ~Player();
     virtual Move nextMove(const GameBoard& board)=0;
+protected:
+    bool playerX;
 };
 
 #endif /* PLAYER_H_ */

@@ -40,12 +40,18 @@ bool GameBoard::makeMove(const Move& playerMove) {
 	return true;
 }
 
-ostream& operator<< (ostream& stream, const GameBoard& board)
+ostream& GameBoard::print(ostream& stream) const
 {
 	return stream
-			<< " " << board.state[0] << " | " << board.state[1] << " | " << board.state[2] << endl
-			<< "-----------" << endl
-			<< " " << board.state[3] << " | " << board.state[4] << " | " << board.state[5] << endl
-			<< "-----------" << endl
-			<< " " << board.state[6] << " | " << board.state[7] << " | " << board.state[8] << endl;
+				<< " " << state[0] << " | " << state[1] << " | " << state[2]
+				<< endl << "-----------" << endl
+				<< " " << state[3] << " | " << state[4] << " | " << state[5]
+				<< endl << "-----------" << endl
+				<< " " << state[6] << " | " << state[7] << " | " << state[8]
+                << endl;
+}
+
+ostream& operator<< (ostream& stream, const GameBoard& board)
+{
+	return board.print(stream);
 }

@@ -17,9 +17,11 @@ public:
 	~GameBoard();
 	bool isFree(int x, int y) const;
 	bool makeMove(const Move& playerMove);
-	friend std::ostream& operator<< (std::ostream& stream, const GameBoard& board);
+	std::ostream& print(std::ostream& stream) const;
 private:
 	char state[9];
 };
+
+std::ostream& operator<< (std::ostream& stream, const GameBoard& board);
 
 #endif /* GAMEBOARD_H_ */

@@ -9,7 +9,7 @@
 #define MOVE_H_
 
 struct Move final {
-	explicit Move(int x, int y, bool playerX);
+	explicit Move(int x, int y);
 	~Move();
 	int x;
 	int y;

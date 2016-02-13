@@ -38,10 +38,10 @@ Move HumanPlayer::nextMove(const GameBoard& board)
 	{
 		cout << "Enter column (0-2): ";
 		getline(cin, input);
-		stringstream(input) >> x;
+		stringstream{input} >> x;
 		cout << "Enter row (0-2): ";
 		getline(cin, input);
-		stringstream(input) >> y;
+		stringstream{input} >> y;
 
 		// Check for errors
 		if (x < 0 || x > 2 || y < 0 || y > 2)
@@ -59,5 +59,5 @@ Move HumanPlayer::nextMove(const GameBoard& board)
 	}
 
 	// Return move
-	return Move(x, y, playerX);
+	return Move{x, y};
 }

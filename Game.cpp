@@ -17,7 +17,7 @@ void Game::run()
 {
     auto currentPlayer = m_playerX.get();
 
-    while (m_board->endState() == notOver)
+    while (m_board->endState() == ttt::EndState::NotOver)
     {
         // Let the current player make their move
         m_board->makeMove((currentPlayer->nextMove(*m_board.get())));
@@ -32,10 +32,10 @@ void Game::run()
     // Display victory or defeat message
     switch (m_board->endState())
     {
-    case xwin:
+    case ttt::EndState::XWin:
     	cout << "Player X wins!" << endl;
     	break;
-    case owin:
+    case ttt::EndState::OWin:
     	cout << "Player O wins!" << endl;
     	break;
     default:

@@ -12,7 +12,6 @@ struct Move final {
 	explicit Move(int x, int y);
 	int x;
 	int y;
-	bool playerX;
 };
 
 #endif /* MOVE_H_ */

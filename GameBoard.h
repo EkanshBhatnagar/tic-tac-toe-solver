@@ -16,7 +16,6 @@ class Move;
 class GameBoard final {
 public:
 	explicit GameBoard();
-	~GameBoard();
 	bool isFree(int x, int y) const;
 	bool makeMove(const Move& playerMove);
 	std::ostream& print(std::ostream& stream) const;

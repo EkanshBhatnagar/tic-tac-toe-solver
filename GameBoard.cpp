@@ -26,11 +26,6 @@ GameBoard::GameBoard(unsigned int xstate, unsigned int ostate)
 {
 }
 
-GameBoard::~GameBoard()
-{
-	// TODO Auto-generated destructor stub
-}
-
 ttt::Player GameBoard::currentPlayer() const
 {
 	/* X always goes first, so if the number of filled spaces
@@ -50,8 +45,6 @@ bool GameBoard::isFree(int x, int y) const {
 
 	return (get(x, y) == ' ');
 }
-
-
 
 ttt::EndState GameBoard::endState() const
 {

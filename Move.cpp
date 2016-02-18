@@ -12,8 +12,3 @@ Move::Move(int x, int y) : x{x}, y{y}
 {
 	assert(x >= 0 && x <= 2 && y >= 0 && y <= 2);
 }
-
-Move::~Move() {
-	// TODO Auto-generated destructor stub
-}
-

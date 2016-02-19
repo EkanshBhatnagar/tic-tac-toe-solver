@@ -1,6 +1,7 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#include "Types.h"
 class GameBoard;
 class Move;
 
@@ -11,7 +12,7 @@ public:
 	virtual ~Player();
     virtual Move nextMove(const GameBoard& board)=0;
 protected:
-    bool playerX;
+    ttt::Player player;
 };
 
 #endif /* PLAYER_H_ */

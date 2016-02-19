@@ -7,8 +7,9 @@
 
 #include "Player.h"
 
-Player::Player(bool playerX) : playerX{playerX}
+Player::Player(bool playerX)
 {
+	player = playerX ? ttt::Player::XPlayer : ttt::Player::OPlayer;
 }
 
 Player::~Player() {}

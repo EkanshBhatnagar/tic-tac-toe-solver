@@ -30,7 +30,8 @@ Move HumanPlayer::nextMove(const GameBoard& board)
 	// Display current board state
 	cout.clear();
 	cout << board;
-	cout << "You are player " << (playerX ? "X" : "O") << endl;
+	cout << "You are player " <<
+			(player == ttt::Player::XPlayer ? "X" : "O") << endl;
 	cout << "It is your turn" << endl;
 
 	// Get user input

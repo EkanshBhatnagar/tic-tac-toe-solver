@@ -15,7 +15,7 @@ using namespace std;
 constexpr unsigned int GameBoard::winStates[];
 
 // Helper functions for this file only
-static int countOnes(unsigned int value);
+static uint8_t countOnes(unsigned int value);
 
 GameBoard::GameBoard() : xstate{0}, ostate{0}
 {
@@ -24,6 +24,12 @@ GameBoard::GameBoard() : xstate{0}, ostate{0}
 GameBoard::GameBoard(unsigned int xstate, unsigned int ostate)
 	: xstate{xstate}, ostate{ostate}
 {
+}
+
+uint8_t GameBoard::usedSpaces() const
+{
+	// Initially 9 empty spaces on the game board
+	return 9 - countOnes(xstate | ostate);
 }
 
 ttt::Player GameBoard::currentPlayer() const
@@ -120,7 +126,7 @@ ostream& operator<< (ostream& stream, const GameBoard& board)
 }
 
 // Static, non-member helper functions for this file only
-int countOnes(unsigned int value)
+uint8_t countOnes(unsigned int value)
 {
 	auto count = 0;
 	for (size_t i = 0; i < sizeof(value) * 8; ++i)

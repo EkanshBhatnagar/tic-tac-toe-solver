@@ -10,6 +10,7 @@
 
 #include <iosfwd>
 #include <list>
+#include <cstdint>
 #include "Types.h"
 class Move;
 
@@ -17,14 +18,15 @@ class GameBoard final {
 public:
 	explicit GameBoard();
 	bool isFree(int x, int y) const;
+	uint8_t usedSpaces() const;
 	bool makeMove(const Move& playerMove);
 	std::ostream& print(std::ostream& stream) const;
 	char get(int x, int y) const;
 	ttt::EndState endState() const;
 	ttt::Player currentPlayer() const;
 private:
-	unsigned int xstate;
-	unsigned int ostate;
+	uint16_t xstate;
+	uint16_t ostate;
 	static constexpr unsigned int winStates[] =
 	{
 			// Full rows

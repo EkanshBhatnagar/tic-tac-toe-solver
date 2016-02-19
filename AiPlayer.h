@@ -9,6 +9,7 @@
 #define AIPLAYER_H_
 
 #include "Player.h"
+#include "Types.h"
 
 class AiPlayer: public Player {
 public:

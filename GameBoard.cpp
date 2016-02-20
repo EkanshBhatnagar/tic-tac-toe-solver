@@ -10,6 +10,7 @@
 #include "GameBoard.h"
 #include "Move.h"
 #include "Types.h"
+#include "Heuristic.h"
 using namespace std;
 
 constexpr unsigned int GameBoard::winStates[];
@@ -117,6 +118,47 @@ ostream& GameBoard::print(ostream& stream) const
 				<< endl << "-----------" << endl
 				<< " " << get(0, 2) << " | " << get(1, 2) << " | " << get(2, 2)
                 << endl;
+}
+
+Heuristic GameBoard::getHeuristic(ttt::Player forPlayer) const
+{
+	// Number of ways for X or O to win in 0 moves, 1 move, etc.
+	uint8_t numWaysXWins[] = { 0, 0, 0, 0 };
+	uint8_t numWaysOWins[] = { 0, 0, 0, 0 };
+	ttt::Player player = currentPlayer();
+
+	for (auto pattern : winStates)
+	{
+		// There are 8 ways to win Tic Tac Toe, and a pattern
+		// representing each of them.
+		//
+		// As an example of the logic here, suppose we're looking at
+		// the pattern corresponding to having every square on the top row,
+		// and X currently has two squares in the top row, with one free.
+		//
+		// xstate & pattern: 110
+		//
+		// The result has 2 1's in it.
+		// 3 - 2 = 1 more X needed in that row to win.
+		// So we increment the number of ways for X to win in 1 move.
+		//
+		// It should also be clear that if the O player has even
+		// a single square in that row, X will be unable to win
+		// by claiming that row. The case when the O player
+		// has no square in that row corresponds to
+		//
+		// ostate & pattern: 000
+		auto xones = countOnes(xstate & pattern);
+		auto oones = countOnes(ostate & pattern);
+		if (oones == 0)
+		{
+			++numWaysXWins[3 - xones];
+		}
+		if (xones == 0)
+		{
+			++numWaysOWins[3 - oones];
+		}
+	}
 }
 
 // Non-member functions

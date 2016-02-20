@@ -12,6 +12,7 @@
 #include <list>
 #include <cstdint>
 #include "Types.h"
+class Heuristic;
 class Move;
 
 class GameBoard final {
@@ -24,6 +25,7 @@ public:
 	char get(int x, int y) const;
 	ttt::EndState endState() const;
 	ttt::Player currentPlayer() const;
+	Heuristic getHeuristic(ttt::Player forPlayer) const;
 private:
 	uint16_t xstate;
 	uint16_t ostate;

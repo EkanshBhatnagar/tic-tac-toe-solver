@@ -8,51 +8,44 @@ using namespace std;
 
 TEST(NodeTest, ZeroDepthHasNoNextNode)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 0, true};
+	auto n = Node{"   /   /   ", 0, true};
 	EXPECT_FALSE(n.hasNextNode());
 }
 
 TEST(NodeTest, FullBoardHasNoNextNode)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"OXO/XXO/XOX"}}, 9, true};
+	auto n = Node{"OXO/XXO/XOX", 9, true};
 	EXPECT_FALSE(n.hasNextNode());
 }
 
 TEST(NodeTest, XWinningBoardHasNoNextNode)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"XXX/OO /   "}}, 5, true};
+	auto n = Node{"XXX/OO /   ", 5, true};
 	EXPECT_FALSE(n.hasNextNode());
 }
 
 TEST(NodeTest, OWinningBoardHasNoNextNode)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"XX /OOO/X  "}}, 4, true};
+	auto n = Node{"XX /OOO/X  ", 4, true};
 	EXPECT_FALSE(n.hasNextNode());
 }
 
 TEST(NodeTest, EmptyBoardHasNextNode)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 1, true};
+	auto n = Node{"   /   /   ", 1, true};
 	EXPECT_TRUE(n.hasNextNode());
 }
 
 TEST(NodeTest, UpdateParentOnRootDoesNotCrash)
 {
-	auto n = Node{
-			unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 1, true};
+	auto n = Node{"   /   /   ", 1, true};
 	n.updateParent(); // Has no parent, but still shouldn't segfault
 	EXPECT_TRUE(true);
 }
 
 TEST(NodeTest, FirstExpansionAddsOneToFringe)
 {
-	auto n = Node{
-			unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 2, true};
+	auto n = Node{"   /   /   ", 2, true};
 	auto fringe = queue<Node>{};
 	EXPECT_EQ(0, fringe.size());
 	n.expandNextNode(fringe);
@@ -61,8 +54,7 @@ TEST(NodeTest, FirstExpansionAddsOneToFringe)
 
 TEST(NodeTest, EmptyBoardRootNodeExpandsNineTimes)
 {
-	auto n = Node{
-			unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 2, true};
+	auto n = Node{"   /   /   ", 2, true};
 	auto fringe = queue<Node>{};
 	EXPECT_EQ(0, fringe.size());
 	for (auto i = 0; i < 9; ++i)
@@ -77,8 +69,7 @@ TEST(NodeTest, EmptyBoardRootNodeExpandsNineTimes)
 TEST(NodeTest, DepthFirstExpansionBottomsOutWhenBoardFull)
 {
 	auto fringe = queue<Node>{};
-	fringe.emplace(Node{
-		unique_ptr<GameBoard>{new GameBoard{"   /   /   "}}, 9, true});
+	fringe.emplace(Node{"   /   /   ", 9, true});
 	for (auto i = 0; i < 9; ++i)
 	{
 		EXPECT_TRUE(fringe.front().hasNextNode());
@@ -90,8 +81,7 @@ TEST(NodeTest, DepthFirstExpansionBottomsOutWhenBoardFull)
 // Tests bug fixed in commit 130ad96da30843fe23a8df806cc2833d81b3ef81
 TEST(NodeTest, MoveIterationDoesNotSkipNodes)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"  O/ XO/X X"}}, 9, false};
+	auto n = Node{"  O/ XO/X X", 9, false};
 	auto counter = queue<Node>{};
 	for (auto i = 0; i < 4; ++i)
 	{
@@ -104,8 +94,7 @@ TEST(NodeTest, MoveIterationDoesNotSkipNodes)
 // Tests bug fixed in commit cd5ffd0d1378d5a883ad46d44a091dfefa181351
 TEST(NodeTest, NonEmptyNodesExpandRightNumberOfTimes)
 {
-	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"  O/ XO/X X"}}, 9, false};
+	auto n = Node{"  O/ XO/X X", 9, false};
 	auto counter = queue<Node>{};
 	for (auto i = 0; i < 4; ++i)
 	{

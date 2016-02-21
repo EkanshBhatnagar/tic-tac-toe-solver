@@ -17,7 +17,7 @@ class GameBoard;
 
 class Node {
 public:
-	explicit Node(std::unique_ptr<GameBoard> state, uint8_t depth, bool maximizer);
+	explicit Node(std::string state, uint8_t depth, bool maximizer);
 	Node(const Node&) = delete;
 	Node& operator=(Node&) = delete;
 	Node& operator=(Node&&) = default;

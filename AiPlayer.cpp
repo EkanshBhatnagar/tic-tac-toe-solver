@@ -28,7 +28,7 @@ Move AiPlayer::nextMove(const GameBoard& board)
 	auto fringe = queue<Node>{};
 
 	// Add the root node
-	fringe.emplace(Node{unique_ptr<GameBoard>{new GameBoard{board}},
+	fringe.emplace(Node{"   /   /   ",
 		board.usedSpaces(),
 		board.currentPlayer() == player});
 

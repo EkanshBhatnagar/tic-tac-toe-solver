@@ -13,6 +13,7 @@
 #include <memory>
 #include <limits>
 #include <cstdint>
+#include <string>
 #include <cassert>
 using namespace std;
 
@@ -39,8 +40,9 @@ Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 }
 
 // For a root node
-Node::Node(unique_ptr<GameBoard> state, uint8_t depth, bool maximizer)
-	: Node(std::move(state), nullptr, nullptr, depth, Heuristic::min(),
+Node::Node(string state, uint8_t depth, bool maximizer)
+	: Node(unique_ptr<GameBoard>{new GameBoard{state}},
+			nullptr, nullptr, depth, Heuristic::min(),
 			Heuristic::max(), maximizer)
 {
 }

@@ -20,6 +20,9 @@ public:
 			ttt::Player maximizingPlayer = ttt::Player::XPlayer);
 	friend bool operator==(const Heuristic& lhs, const Heuristic& rhs);
 	friend bool operator<(const Heuristic& lhs, const Heuristic& rhs);
+	static const Heuristic& max();
+	static const Heuristic& min();
+
 private:
 	std::array<int8_t, 4> numWaysToWin;
 	std::array<int8_t, 4> numWaysToLose;

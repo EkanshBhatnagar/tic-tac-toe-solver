@@ -76,3 +76,21 @@ bool operator>=(const Heuristic& lhs, const Heuristic& rhs)
 {
 	return !(lhs < rhs);
 }
+
+const Heuristic& Heuristic::max()
+{
+	// Don't worry about leaking memory, since the static object
+	// is meant to live till the end of the program, when the OS
+	// cleans everything up anyway.
+	static const Heuristic* max = new Heuristic{{4,4,4,4}, {-4,-4,-4,-4}};
+	return *max;
+}
+
+const Heuristic& Heuristic::min()
+{
+	// Don't worry about leaking memory, since the static object
+	// is meant to live till the end of the program, when the OS
+	// cleans everything up anyway.
+	static const Heuristic* min = new Heuristic{{-4,-4,-4,-4}, {4,4,4,4}};
+	return *min;
+}

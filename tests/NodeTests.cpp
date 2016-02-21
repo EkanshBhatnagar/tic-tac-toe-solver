@@ -87,10 +87,11 @@ TEST(NodeTest, DepthFirstExpansionBottomsOutWhenBoardFull)
 	EXPECT_FALSE(fringe.front().hasNextNode());
 }
 
-TEST(NodeTest, SubsequentNodesExpandRightNumberOfTimes)
+// Tests bug fixed in commit 130ad96da30843fe23a8df806cc2833d81b3ef81
+TEST(NodeTest, MoveIterationDoesNotSkipNodes)
 {
 	auto n = Node{
-		unique_ptr<GameBoard>{new GameBoard{"  O/ XO/X X"}}, 9, true};
+		unique_ptr<GameBoard>{new GameBoard{"  O/ XO/X X"}}, 9, false};
 	auto counter = queue<Node>{};
 	for (auto i = 0; i < 4; ++i)
 	{
@@ -98,5 +99,18 @@ TEST(NodeTest, SubsequentNodesExpandRightNumberOfTimes)
 		n.expandNextNode(counter);
 		EXPECT_EQ(i + 1, counter.size());
 	}
+}
+
+// Tests bug fixed in commit cd5ffd0d1378d5a883ad46d44a091dfefa181351
+TEST(NodeTest, NonEmptyNodesExpandRightNumberOfTimes)
+{
+	auto n = Node{
+		unique_ptr<GameBoard>{new GameBoard{"  O/ XO/X X"}}, 9, false};
+	auto counter = queue<Node>{};
+	for (auto i = 0; i < 4; ++i)
+	{
+		n.expandNextNode(counter);
+	}
+	EXPECT_EQ(4, counter.size());
 	EXPECT_FALSE(n.hasNextNode());
 }

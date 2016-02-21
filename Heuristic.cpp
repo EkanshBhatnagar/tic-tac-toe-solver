@@ -9,16 +9,14 @@
 #include "Heuristic.h"
 #include "GameBoard.h"
 
-Heuristic::Heuristic(std::array<uint8_t, 4> numWaysXWins,
-		std::array<uint8_t, 4> numWaysOWins, ttt::Player currentPlayer,
-		ttt::Player forPlayer)
-	: numWaysToWin{numWaysXWins}, numWaysToLose{numWaysOWins},
-	  isOwnTurn{currentPlayer == forPlayer}
+Heuristic::Heuristic(std::array<int8_t, 4> numWaysXWins,
+		std::array<int8_t, 4> numWaysOWins, ttt::Player maximizingPlayer)
+	: numWaysToWin{numWaysXWins}, numWaysToLose{numWaysOWins}
 {
 	// Initialize above assuming we're player X, and swap here if we're not.
 	// This is probably more efficient than calling the default constructor
 	// for the std::arrays and then calling the assignment operator here.
-	if (forPlayer != ttt::XPlayer)
+	if (maximizingPlayer != ttt::XPlayer)
 	{
 		std::swap(numWaysToWin, numWaysToWin);
 	}
@@ -26,8 +24,7 @@ Heuristic::Heuristic(std::array<uint8_t, 4> numWaysXWins,
 
 bool operator==(const Heuristic& lhs, const Heuristic& rhs)
 {
-	return lhs.isOwnTurn == rhs.isOwnTurn
-			&& lhs.numWaysToLose == rhs.numWaysToLose
+	return lhs.numWaysToLose == rhs.numWaysToLose
 			&& lhs.numWaysToWin == rhs.numWaysToWin;
 }
 
@@ -49,15 +46,8 @@ bool operator<(const Heuristic& lhs, const Heuristic& rhs)
 		{
 			return false;
 		}
-		else
-		{
-			if (!lhs.isOwnTurn && rhs.isOwnTurn)
-			{
-				return true;
-			}
-		}
 
-		// A state is worse if there are more ways to lose
+		// A state is worse if there are fewer ways to win
 		if (lhs.numWaysToWin[i] < rhs.numWaysToWin[i])
 		{
 			return true;
@@ -66,14 +56,10 @@ bool operator<(const Heuristic& lhs, const Heuristic& rhs)
 		{
 			return false;
 		}
-		else
-		{
-			if (!lhs.isOwnTurn && rhs.isOwnTurn)
-			{
-				return true;
-			}
-		}
 	}
+
+	// To have reached this point, we must have lhs == rhs
+	return false;
 }
 
 bool operator>(const Heuristic& lhs, const Heuristic& rhs)

@@ -151,9 +151,11 @@ ostream& GameBoard::print(ostream& stream) const
 Heuristic GameBoard::getHeuristic(const Move& move) const
 {
 	// Number of ways for X or O to win in 0 moves, 1 move, etc.
-	uint8_t numWaysXWins[] = { 0, 0, 0, 0 };
-	uint8_t numWaysOWins[] = { 0, 0, 0, 0 };
-	ttt::Player player = currentPlayer();
+	array<int8_t, 4> numWaysXWins = { 0, 0, 0, 0 };
+	array<int8_t, 4> numWaysOWins = { 0, 0, 0, 0 };
+
+	auto hypothetical = GameBoard{*this};
+	hypothetical.makeMove(move);
 
 	for (auto pattern : winStates)
 	{
@@ -176,17 +178,21 @@ Heuristic GameBoard::getHeuristic(const Move& move) const
 		// has no square in that row corresponds to
 		//
 		// ostate & pattern: 000
-		auto xones = (xstate & pattern).count();
-		auto oones = (ostate & pattern).count();
-		if (oones == 0)
-		{
-			++numWaysXWins[3 - xones];
-		}
-		if (xones == 0)
-		{
-			++numWaysOWins[3 - oones];
-		}
+		auto xones = (hypothetical.xstate & pattern).count();
+		auto oones = (hypothetical.ostate & pattern).count();
+		if (oones == 0) { ++numWaysXWins[3 - xones]; }
+		if (xones == 0) { ++numWaysOWins[3 - oones]; }
+		// We're interested in the difference between the number of
+		// ways to win between the current state and the hypothetical
+		// state given by the move. So subtract the number of
+		// ways to win in the current state.
+		xones = (xstate & pattern).count();
+		oones = (ostate & pattern).count();
+		if (oones == 0) { --numWaysXWins[3 - xones]; }
+		if (xones == 0) { --numWaysOWins[3 - oones]; }
 	}
+
+	return Heuristic{numWaysXWins, numWaysOWins};
 }
 
 // Non-member functions

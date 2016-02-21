@@ -15,15 +15,14 @@ class GameBoard;
 
 class Heuristic {
 public:
-	Heuristic(std::array<uint8_t, 4> numWaysXWins,
-			std::array<uint8_t, 4> numWaysOWins,
-			ttt::Player currentPlayer, ttt::Player forPlayer);
+	Heuristic(std::array<int8_t, 4> numWaysXWins,
+			std::array<int8_t, 4> numWaysOWins,
+			ttt::Player maximizingPlayer = ttt::Player::XPlayer);
 	friend bool operator==(const Heuristic& lhs, const Heuristic& rhs);
 	friend bool operator<(const Heuristic& lhs, const Heuristic& rhs);
 private:
-	std::array<uint8_t, 4> numWaysToWin;
-	std::array<uint8_t, 4> numWaysToLose;
-	bool isOwnTurn;
+	std::array<int8_t, 4> numWaysToWin;
+	std::array<int8_t, 4> numWaysToLose;
 };
 
 bool operator==(const Heuristic& lhs, const Heuristic& rhs);

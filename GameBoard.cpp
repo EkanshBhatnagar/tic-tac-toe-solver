@@ -15,10 +15,7 @@
 #include "Heuristic.h"
 using namespace std;
 
-constexpr unsigned int GameBoard::winStates[];
-
-// Helper functions for this file only
-static uint8_t countOnes(unsigned int value);
+constexpr bitset<9> GameBoard::winStates[];
 
 GameBoard::GameBoard() : xstate{0}, ostate{0}
 {
@@ -54,22 +51,21 @@ GameBoard::GameBoard(std::string boardState) : GameBoard()
 	ostate = obits.to_ulong();
 }
 
-GameBoard::GameBoard(unsigned int xstate, unsigned int ostate)
+GameBoard::GameBoard(bitset<9> xstate, bitset<9> ostate)
 	: xstate{xstate}, ostate{ostate}
 {
 }
 
 uint8_t GameBoard::usedSpaces() const
 {
-	// Initially 9 empty spaces on the game board
-	return 9 - countOnes(xstate | ostate);
+	return (xstate | ostate).count();
 }
 
 ttt::Player GameBoard::currentPlayer() const
 {
 	/* X always goes first, so if the number of filled spaces
 	 * is even, it's X's turn, otherwise O's. */
-	if (countOnes(xstate | ostate) % 2 == 0)
+	if ((xstate | ostate).count() % 2 == 0)
 	{
 		return ttt::Player::XPlayer;
 	}
@@ -89,11 +85,11 @@ ttt::EndState GameBoard::endState() const
 {
 	for (auto pattern : winStates)
 	{
-		if ((xstate & pattern) == pattern)
+		if ((xstate & bitset<9>{pattern}) == pattern)
 		{
 			return ttt::EndState::XWin;
 		}
-		else if ((ostate & pattern) == pattern)
+		else if ((ostate & bitset<9>{pattern}) == pattern)
 		{
 			return ttt::EndState::OWin;
 		}
@@ -127,11 +123,11 @@ bool GameBoard::makeMove(const Move& playerMove) {
 
 char GameBoard::get(int x, int y) const
 {
-	if (xstate & (1 << (x + y * 3)))
+	if (xstate[x + y * 3])
 	{
 		return 'X';
 	}
-	else if (ostate & (1 << (x + y * 3)))
+	else if (ostate[x + y * 3])
 	{
 		return 'O';
 	}
@@ -180,8 +176,8 @@ Heuristic GameBoard::getHeuristic(const Move& move) const
 		// has no square in that row corresponds to
 		//
 		// ostate & pattern: 000
-		auto xones = countOnes(xstate & pattern);
-		auto oones = countOnes(ostate & pattern);
+		auto xones = (xstate & pattern).count();
+		auto oones = (ostate & pattern).count();
 		if (oones == 0)
 		{
 			++numWaysXWins[3 - xones];
@@ -191,27 +187,10 @@ Heuristic GameBoard::getHeuristic(const Move& move) const
 			++numWaysOWins[3 - oones];
 		}
 	}
-
-
 }
 
 // Non-member functions
 ostream& operator<< (ostream& stream, const GameBoard& board)
 {
 	return board.print(stream);
-}
-
-// Static, non-member helper functions for this file only
-uint8_t countOnes(unsigned int value)
-{
-	auto count = 0;
-	for (size_t i = 0; i < sizeof(value) * 8; ++i)
-	{
-		if ((value & 1) == 1)
-		{
-			++count;
-		}
-		value >>= 1;
-	}
-	return count;
 }

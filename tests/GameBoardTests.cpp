@@ -32,6 +32,7 @@ TEST(GameBoardTest, DefaultBoardIsEmpty)
 	}
 }
 
+
 TEST(GameBoardTest, TurnsAlternate)
 {
 	auto gb = GameBoard{};

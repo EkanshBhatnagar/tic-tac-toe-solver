@@ -12,6 +12,7 @@
 #include <list>
 #include <cstdint>
 #include "Types.h"
+#include <bitset>
 class Heuristic;
 class Move;
 
@@ -28,9 +29,9 @@ public:
 	ttt::Player currentPlayer() const;
 	Heuristic getHeuristic(const Move& move) const;
 private:
-	uint16_t xstate;
-	uint16_t ostate;
-	static constexpr unsigned int winStates[] =
+	std::bitset<9> xstate;
+	std::bitset<9> ostate;
+	static constexpr std::bitset<9> winStates[] =
 	{
 			// Full rows
 			1 << 0 | 1 << 1 | 1 << 2, // 111 *** ***
@@ -44,8 +45,8 @@ private:
 			1 << 0 | 1 << 4 | 1 << 8, // 1** *1* **1
 			1 << 2 | 1 << 4 | 1 << 6  // **1 *1* 1**
 	};
-	static const unsigned int tieState = 511; // 111 111 111
-	explicit GameBoard(unsigned int xstate, unsigned int ostate);
+	static constexpr auto tieState = std::bitset<9>{511}; // 111111111
+	explicit GameBoard(std::bitset<9> xstate, std::bitset<9> ostate);
 };
 
 std::ostream& operator<< (std::ostream& stream, const GameBoard& board);

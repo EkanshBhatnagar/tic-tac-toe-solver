@@ -8,6 +8,7 @@
 #include "Node.h"
 #include "Move.h"
 #include "GameBoard.h"
+#include "Heuristic.h"
 #include <queue>
 #include <memory>
 #include <limits>
@@ -17,7 +18,7 @@ using namespace std;
 
 Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 		std::unique_ptr<Move> action, uint8_t depth,
-		int8_t alpha, int8_t beta, bool maximizer)
+		Heuristic alpha, Heuristic beta, bool maximizer)
 	: state{std::move(state)},
 	  parent{parent},
 	  action{std::move(action)},
@@ -25,17 +26,22 @@ Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 	  alpha{alpha},
 	  beta{beta},
 	  maximizer{maximizer},
-	  bestChildValue{maximizer ? std::numeric_limits<int8_t>::min()
-	      		: std::numeric_limits<int8_t>::max()},
+	  bestChildValue{maximizer ? Heuristic::min() : Heuristic::max()},
 	  nextNodeMove{0, 0},
 	  bestChild{nullptr}
 {
+	// If they called it with a null GameBoard,
+	// they probably want a blank game state
+	if (state == nullptr)
+	{
+		state.reset(new GameBoard);
+	}
 }
 
 // For a root node
 Node::Node(unique_ptr<GameBoard> state, uint8_t depth, bool maximizer)
-	: Node(std::move(state), nullptr, nullptr, depth, std::numeric_limits<int8_t>::min(),
-			std::numeric_limits<int8_t>::max(), maximizer)
+	: Node(std::move(state), nullptr, nullptr, depth, Heuristic::min(),
+			Heuristic::max(), maximizer)
 {
 }
 
@@ -43,9 +49,12 @@ Node::Node(unique_ptr<GameBoard> state, uint8_t depth, bool maximizer)
 // or beta > alpha. Note that beta is our strongest lower bound and alpha
 // is our strongest upper bound, so beta > alpha indicates a game state that
 // any sane opponent will never let happen.
+//
+// We also stop expanding nodes when depth reaches 0 or when the game is over.
 bool Node::hasNextNode() const
 {
-	return get<0>(nextNodeMove) <= 2 && get<1>(nextNodeMove) <= 2
+	return depth > 0 && !isTerminalState() &&
+			get<0>(nextNodeMove) <= 2 && get<1>(nextNodeMove) <= 2
 			&& beta > alpha;
 }
 
@@ -78,16 +87,18 @@ void Node::expandNextNode(queue<Node>& fringe)
 					// Invalid move
 					nextNodeMove = decltype(nextNodeMove){ 3, 3 };
 				}
+
+				return; // Should only expand one node at a time
 			}
 		}
 	}
 }
 
-uint8_t Node::getValue() const
+Heuristic Node::getValue() const
 {
-	if (depth == 0 || isTerminalState())
+	if ((parent && (depth == 0)) || isTerminalState())
 	{
-		return getHeuristic();
+		return parent->state->getHeuristic(*action);
 	}
 	else if (maximizer)
 	{
@@ -97,11 +108,6 @@ uint8_t Node::getValue() const
 	{
 		return alpha;
 	}
-}
-
-uint8_t Node::getHeuristic() const
-{
-	return 0; // TODO: Implement heuristics
 }
 
 void Node::updateParent()
@@ -137,11 +143,6 @@ void Node::update(const Node& child)
 bool Node::isTerminalState() const
 {
 	return state->endState() != ttt::EndState::NotOver;
-}
-
-uint8_t Node::getDepth() const
-{
-	return depth;
 }
 
 Move Node::getBestMove() const

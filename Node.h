@@ -11,6 +11,7 @@
 #include <memory>
 #include <queue>
 #include <cstdint>
+#include "Heuristic.h"
 class Move;
 class GameBoard;
 
@@ -23,8 +24,6 @@ public:
 	Node(Node&&) = default;
 	void expandNextNode(std::queue<Node>& fringe);
 	bool hasNextNode() const;
-	bool isTerminalState() const;
-	uint8_t getDepth() const;
 	void updateParent();
 	Move getBestMove() const;
 private: // Data members
@@ -32,19 +31,19 @@ private: // Data members
 	Node* const parent;
 	std::unique_ptr<Move> action; // action that got us here from the parent
 	uint8_t depth;
-	int8_t alpha;
-	int8_t beta;
+	Heuristic alpha;
+	Heuristic beta;
 	bool maximizer;
-	int8_t bestChildValue;
+	Heuristic bestChildValue;
 	std::tuple<uint8_t, uint8_t> nextNodeMove;
 	const Node* bestChild;
 private: // Member functions
 	explicit Node(std::unique_ptr<GameBoard> state, Node* const parent,
 				std::unique_ptr<Move> action, uint8_t depth,
-				int8_t alpha, int8_t beta, bool maximizer);
+				Heuristic alpha, Heuristic beta, bool maximizer);
 	void update(const Node& child);
-	uint8_t getValue() const;
-	uint8_t getHeuristic() const;
+	Heuristic getValue() const;
+	bool isTerminalState() const;
 };
 
 #endif /* NODE_H_ */

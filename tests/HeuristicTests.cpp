@@ -39,3 +39,31 @@ TEST(HeuristicTest, SymmetricBoardStatesAreEquivalent)
 	EXPECT_EQ(gb.getHeuristic(Move{2,1}), gb.getHeuristic(Move{1,0}));
 	EXPECT_EQ(gb.getHeuristic(Move{0,1}), gb.getHeuristic(Move{1,0}));
 }
+
+TEST(HeuristicTest, MoveRankingTransitivity)
+{
+	auto gb = GameBoard{"   /OX /   "};
+	// Best moves are {0,0}, {2,0}, {1,0}, and {2,1} in that order
+	EXPECT_LT(gb.getHeuristic(Move{2,0}), gb.getHeuristic(Move{0,0}));
+	EXPECT_LT(gb.getHeuristic(Move{1,0}), gb.getHeuristic(Move{2,0}));
+	EXPECT_LT(gb.getHeuristic(Move{2,1}), gb.getHeuristic(Move{1,0}));
+	// Check transitivity
+	EXPECT_LT(gb.getHeuristic(Move{1,0}), gb.getHeuristic(Move{0,0}));
+	EXPECT_LT(gb.getHeuristic(Move{2,1}), gb.getHeuristic(Move{0,0}));
+	EXPECT_LT(gb.getHeuristic(Move{2,1}), gb.getHeuristic(Move{2,0}));
+}
+
+TEST(HeuristicTest, GreaterThan)
+{
+	auto gb = GameBoard{"   /OX /   "};
+	// Best moves are {0,0}, {2,0}, {1,0}, and {2,1} in that order
+	EXPECT_GT(gb.getHeuristic(Move{0,0}), gb.getHeuristic(Move{2,0}));
+}
+
+TEST(HeuristicTest, PrioritizeWinningSooner)
+{
+	auto gb = GameBoard{"   /OX /OX "};
+	// {0,0} prevents a loss that would happen in 1 move
+	// {1,0} immediately wins
+	EXPECT_GT(gb.getHeuristic(Move{1,0}), gb.getHeuristic(Move{0,0}));
+}

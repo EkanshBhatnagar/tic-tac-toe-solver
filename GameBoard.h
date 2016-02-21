@@ -18,6 +18,7 @@ class Move;
 class GameBoard final {
 public:
 	explicit GameBoard();
+	explicit GameBoard(std::string boardState);
 	bool isFree(int x, int y) const;
 	uint8_t usedSpaces() const;
 	bool makeMove(const Move& playerMove);
@@ -25,7 +26,7 @@ public:
 	char get(int x, int y) const;
 	ttt::EndState endState() const;
 	ttt::Player currentPlayer() const;
-	Heuristic getHeuristic(ttt::Player forPlayer) const;
+	Heuristic getHeuristic(const Move& move) const;
 private:
 	uint16_t xstate;
 	uint16_t ostate;

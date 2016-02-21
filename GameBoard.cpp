@@ -7,7 +7,9 @@
 
 #include <assert.h>
 #include <ostream>
+#include <bitset>
 #include "GameBoard.h"
+#include <string>
 #include "Move.h"
 #include "Types.h"
 #include "Heuristic.h"
@@ -20,6 +22,36 @@ static uint8_t countOnes(unsigned int value);
 
 GameBoard::GameBoard() : xstate{0}, ostate{0}
 {
+}
+
+// Board state string looks something like "XXX/OOO/   ",
+// which would mean 3 Xs on the top row, 3 Os in the middle row,
+// and the bottom row blank.
+GameBoard::GameBoard(std::string boardState) : GameBoard()
+{
+	assert(boardState.size() == 11 || boardState.size() == 9);
+	if (boardState.size() == 11)
+	{
+		boardState.erase(3, 1);
+		boardState.erase(6, 1);
+	}
+
+	auto xbits = bitset<9>{};
+	auto obits = bitset<9>{};
+	for (auto i = 0; i < 9; ++i)
+	{
+		if (boardState[i] == 'X')
+		{
+			xbits[i] = 1;
+		}
+		else if (boardState[i] == 'O')
+		{
+			obits[i] = 1;
+		}
+	}
+
+	xstate = xbits.to_ulong();
+	ostate = obits.to_ulong();
 }
 
 GameBoard::GameBoard(unsigned int xstate, unsigned int ostate)
@@ -120,7 +152,7 @@ ostream& GameBoard::print(ostream& stream) const
                 << endl;
 }
 
-Heuristic GameBoard::getHeuristic(ttt::Player forPlayer) const
+Heuristic GameBoard::getHeuristic(const Move& move) const
 {
 	// Number of ways for X or O to win in 0 moves, 1 move, etc.
 	uint8_t numWaysXWins[] = { 0, 0, 0, 0 };
@@ -159,6 +191,8 @@ Heuristic GameBoard::getHeuristic(ttt::Player forPlayer) const
 			++numWaysOWins[3 - oones];
 		}
 	}
+
+
 }
 
 // Non-member functions

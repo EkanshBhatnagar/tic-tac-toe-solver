@@ -60,44 +60,45 @@ bool Node::hasNextNode() const
 
 void Node::expandNextNode(queue<Node>& fringe)
 {
-	// Use the stored x on the first loop, but every loop after that it should
-	// reset to 0 when we go to a new row.
 	auto x = get<0>(nextNodeMove);
+	auto y = get<1>(nextNodeMove);
 
-	for (auto y = get<1>(nextNodeMove); y < 3; ++y)
+	// Has this function call already expanded a node.
+	// We need to keep track of this so that we can increment nextNodeMove
+	// until it points to the next valid move.
+	auto expanded = false;
+
+	for (/* y */; y < 3; ++y)
 	{
 		for (/* first init x as stored value, then 0 */ ; x < 3; ++x)
 		{
-			if (state->get(x, y) == ' ')
+			if (state->isFree(x, y))
 			{
-				// Add child state to the fringe
-				auto newBoard = unique_ptr<GameBoard>{new GameBoard{*state}};
-				auto newMove = unique_ptr<Move>{new Move{x, y}};
-				newBoard->makeMove(*newMove);
-				fringe.emplace(Node{std::move(newBoard), this,
-					std::move(newMove), depth > 0 ? depth - 1 : 0,
-					alpha, beta, !maximizer});
-
-				// Increment the next move coordinates
-				if (x < 2)
+				if (!expanded)
 				{
-					nextNodeMove = decltype(nextNodeMove){ x + 1, y };
-				}
-				else if (y < 2)
-				{
-					nextNodeMove = decltype(nextNodeMove){ 0, y + 1 };
+					// Add child state to the fringe
+					auto newBoard =
+							unique_ptr<GameBoard>{new GameBoard{*state}};
+					auto newMove = unique_ptr<Move>{new Move{x, y}};
+					newBoard->makeMove(*newMove);
+					fringe.emplace(Node{move(newBoard), this,
+						move(newMove), depth > 0 ? depth - 1 : 0,
+						alpha, beta, !maximizer});
+					expanded = true; // Only expand once per function call
 				}
 				else
 				{
-					// Invalid move indicates no more moves remaining
-					nextNodeMove = decltype(nextNodeMove){ 3, 3 };
+					// Save the coordinates of the next free space
+					nextNodeMove = decltype(nextNodeMove){ x, y };
+					return;
 				}
-
-				return; // Should only expand one node at a time
 			}
 		}
 		x = 0; // On a new row, so reset x to 0
 	}
+
+	// No more nodes found, so indicate that with an invalid move
+	nextNodeMove = decltype(nextNodeMove){ 3, 3 };
 }
 
 Heuristic Node::getValue() const

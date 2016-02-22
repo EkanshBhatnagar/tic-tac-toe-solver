@@ -5,12 +5,12 @@
  *      Author: derek
  */
 
-//#include <iostream>
+#include <ostream>
 #include "Node.h"
 #include "Move.h"
 #include "GameBoard.h"
 #include "Heuristic.h"
-#include <queue>
+#include <stack>
 #include <memory>
 #include <limits>
 #include <cstdint>
@@ -29,7 +29,7 @@ Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 	  beta{beta},
 	  maximizer{maximizer},
 	  nextNodeMove{0, 0},
-	  bestChild{nullptr}
+	  bestMove{nullptr}
 {
 	// If they called it with a null GameBoard,
 	// they probably want a blank game state
@@ -42,6 +42,14 @@ Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 // For a root node
 Node::Node(string state, uint8_t depth, bool maximizer)
 	: Node(unique_ptr<GameBoard>{new GameBoard{state}},
+			nullptr, nullptr, depth, Heuristic::min(),
+			Heuristic::max(), maximizer)
+{
+}
+
+// For a root node
+Node::Node(const GameBoard& state, uint8_t depth, bool maximizer)
+	: Node(make_unique<GameBoard>(state),
 			nullptr, nullptr, depth, Heuristic::min(),
 			Heuristic::max(), maximizer)
 {
@@ -60,7 +68,7 @@ bool Node::hasNextNode() const
 			&& beta > alpha;
 }
 
-void Node::expandNextNode(queue<Node>& fringe)
+void Node::expandNextNode(stack<Node>& fringe)
 {
 	auto x = get<0>(nextNodeMove);
 	auto y = get<1>(nextNodeMove);
@@ -79,9 +87,8 @@ void Node::expandNextNode(queue<Node>& fringe)
 				if (!expanded)
 				{
 					// Add child state to the fringe
-					auto newBoard =
-							unique_ptr<GameBoard>{new GameBoard{*state}};
-					auto newMove = unique_ptr<Move>{new Move{x, y}};
+					auto newBoard = make_unique<GameBoard>(*state);
+					auto newMove = make_unique<Move>(x, y);
 					newBoard->makeMove(*newMove);
 					fringe.emplace(Node{move(newBoard), this,
 						move(newMove), depth > 0 ? depth - 1 : 0,
@@ -117,7 +124,6 @@ void Node::updateParent()
 {
 	if (parent)
 	{
-		//cout << "Node " << this << ": Updating parent from " << *action << endl;
 		parent->update(*this);
 	}
 }
@@ -132,7 +138,14 @@ void Node::update(const Node& child)
 		if (child.getValue() > alpha)
 		{
 			alpha = child.getValue();
-			bestChild = &child;
+			if (bestMove)
+			{
+				*bestMove = *child.action;
+			}
+			else
+			{
+				bestMove = make_unique<Move>(*child.action);
+			}
 		}
 	}
 	else
@@ -143,7 +156,14 @@ void Node::update(const Node& child)
 		if (child.getValue() < beta)
 		{
 			beta = child.getValue();
-			bestChild = &child;
+			if (bestMove)
+			{
+				*bestMove = *child.action;
+			}
+			else
+			{
+				bestMove = make_unique<Move>(*child.action);
+			}
 		}
 	}
 }
@@ -155,6 +175,38 @@ bool Node::isTerminalState() const
 
 Move Node::getBestMove() const
 {
-	assert(bestChild != nullptr);
-	return *bestChild->action;
+	assert(bestMove != nullptr);
+	return *bestMove;
+}
+
+ostream& Node::print(ostream& stream) const
+{
+	stream << "Node{ State{ \""
+			<< state->get(0,0) << state->get(1,0) << state->get(2,0) << "/"
+			<< state->get(0,1) << state->get(1,1) << state->get(2,1) << "/"
+			<< state->get(0,2) << state->get(1,2) << state->get(2,2)
+			<< "\" }, Action=";
+	if (action)
+	{
+		stream << *action;
+	}
+	else
+	{
+		stream << "null";
+	}
+	stream << ", BestMove=";
+	if (bestMove)
+	{
+		stream << *bestMove;
+	}
+	else
+	{
+		stream << "null";
+	}
+	return stream << " }";
+}
+
+std::ostream& operator<<(std::ostream& stream, const Node& node)
+{
+	return node.print(stream);
 }

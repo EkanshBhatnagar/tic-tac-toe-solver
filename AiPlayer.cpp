@@ -5,7 +5,7 @@
  *      Author: derek
  */
 
-#include <queue>
+#include <stack>
 #include <list>
 #include "AiPlayer.h"
 #include "Move.h"
@@ -24,37 +24,30 @@ AiPlayer::~AiPlayer()
 
 Move AiPlayer::nextMove(const GameBoard& board)
 {
-	auto nodes = list<Node>{};
-	auto fringe = queue<Node>{};
-
-	// Add the root node
-	fringe.emplace(Node{"   /   /   ",
-		board.usedSpaces(),
-		board.currentPlayer() == player});
+	auto fringe = stack<Node>{};
+	// Use a depth-limited search of 3
+	fringe.emplace(Node{board, min(3, 9 - board.usedSpaces()), true});
 
 	while (!fringe.empty())
 	{
-		if (fringe.front().hasNextNode())
+		if (fringe.top().hasNextNode())
 		{
 			// Expand the next node, and make that the top of the stack
-			fringe.front().expandNextNode(fringe);
+			fringe.top().expandNextNode(fringe);
 			// Following ordinary stack rules, we can only ever operate on the
 			// top element, so go back to the start of the loop.
 		}
 		else
 		{
-			fringe.front().updateParent();
-
-			// Done with the current node, so add it to our finished node list
-			// and then pop it from the stack
-			nodes.push_back(std::move(fringe.front()));
-			fringe.pop();
+			if (fringe.size() > 1)
+			{
+				fringe.top().updateParent();
+				fringe.pop();
+			}
+			else
+			{
+				return fringe.top().getBestMove();
+			}
 		}
 	}
-
-	// Best move will be whatever child node gave the final alpha value to the root
-	// We throw out the rest of the game tree because we'll need to recalculate it
-	// once the opponent makes his move.
-
-	return nodes.front().getBestMove();
 }

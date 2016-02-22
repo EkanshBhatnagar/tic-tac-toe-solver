@@ -9,11 +9,12 @@
 #define MOVE_H_
 
 #include <iosfwd>
+#include <cstdint>
 
 struct Move final {
-	explicit Move(int x, int y);
-	int x;
-	int y;
+	explicit Move(uint8_t x, uint8_t y);
+	uint8_t x;
+	uint8_t y;
 	std::ostream& print(std::ostream& stream) const;
 };
 

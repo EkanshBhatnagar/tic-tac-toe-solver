@@ -10,7 +10,7 @@
 #include "Move.h"
 using namespace std;
 
-Move::Move(int x, int y) : x{x}, y{y}
+Move::Move(uint8_t x, uint8_t y) : x{x}, y{y}
 {
 	assert(x >= 0 && x <= 2 && y >= 0 && y <= 2);
 }
@@ -27,7 +27,8 @@ bool operator!=(const Move& lhs, const Move& rhs)
 
 ostream& Move::print(ostream& stream) const
 {
-	return stream << "Move{" << x << "," << y << "}";
+	// Use +x and +y so that these print as integers
+	return stream << "Move{" << +x << "," << +y << "}";
 }
 
 ostream& operator<< (ostream& stream, const Move& move)

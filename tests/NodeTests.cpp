@@ -118,7 +118,7 @@ TEST(NodeTest, FirstExpandedNodeUpdatesParent)
 	EXPECT_EQ(m, n.getBestMove());
 }
 
-TEST(NodeTest, FindBestMoveFromEmptyBoard)
+TEST(NodeTest, FindBestMaximizingMoveFromEmptyBoard)
 {
 	auto n = Node{"   /   /   ", 1, true};
 	auto fringe = queue<Node>{};
@@ -130,5 +130,35 @@ TEST(NodeTest, FindBestMoveFromEmptyBoard)
 	}
 
 	auto m = Move{1,1};
+	EXPECT_EQ(m, n.getBestMove());
+}
+
+TEST(NodeTest, FindBestMinimizingMoveAfterOneX)
+{
+	auto n = Node{"   / X /   ", 1, false};
+	auto fringe = queue<Node>{};
+
+	while (n.hasNextNode())
+	{
+		n.expandNextNode(fringe);
+		fringe.back().updateParent();
+	}
+
+	auto m = Move{0,0};
+	EXPECT_EQ(m, n.getBestMove());
+}
+
+TEST(NodeTest, FindBestMoveAfterOneO)
+{
+	auto n = Node{"O  / X /   ", 1, true};
+	auto fringe = queue<Node>{};
+
+	while (n.hasNextNode())
+	{
+		n.expandNextNode(fringe);
+		fringe.back().updateParent();
+	}
+
+	auto m = Move{2,0};
 	EXPECT_EQ(m, n.getBestMove());
 }

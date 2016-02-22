@@ -25,8 +25,11 @@ AiPlayer::~AiPlayer()
 Move AiPlayer::nextMove(const GameBoard& board)
 {
 	auto fringe = stack<Node>{};
-	// Use a depth-limited search of 3
-	fringe.emplace(Node{board, min(3, 9 - board.usedSpaces()), true});
+	// Limiting the search depth to 1 seems to lead to optimal play.
+	// Because the AI assumes the human plays perfectly, allowing a deeper
+	// search causes it to dismiss options that could lead to victory
+	// when the human plays poorly.
+	fringe.emplace(Node{board, 1, true});
 
 	while (!fringe.empty())
 	{
@@ -46,8 +49,10 @@ Move AiPlayer::nextMove(const GameBoard& board)
 			}
 			else
 			{
-				return fringe.top().getBestMove();
+				break;
 			}
 		}
 	}
+
+	return fringe.top().getBestMove();
 }

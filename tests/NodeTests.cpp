@@ -103,3 +103,32 @@ TEST(NodeTest, NonEmptyNodesExpandRightNumberOfTimes)
 	EXPECT_EQ(4, counter.size());
 	EXPECT_FALSE(n.hasNextNode());
 }
+
+TEST(NodeTest, FirstExpandedNodeUpdatesParent)
+{
+	auto n = Node{"   /   /   ", 1, true};
+	auto fringe = queue<Node>{};
+
+	// Expand first node
+	n.expandNextNode(fringe);
+	fringe.front().updateParent();
+
+	// Expected best move
+	auto m = Move{0,0};
+	EXPECT_EQ(m, n.getBestMove());
+}
+
+TEST(NodeTest, FindBestMoveFromEmptyBoard)
+{
+	auto n = Node{"   /   /   ", 1, true};
+	auto fringe = queue<Node>{};
+
+	while (n.hasNextNode())
+	{
+		n.expandNextNode(fringe);
+		fringe.back().updateParent();
+	}
+
+	auto m = Move{1,1};
+	EXPECT_EQ(m, n.getBestMove());
+}

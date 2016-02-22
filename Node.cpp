@@ -5,6 +5,7 @@
  *      Author: derek
  */
 
+//#include <iostream>
 #include "Node.h"
 #include "Move.h"
 #include "GameBoard.h"
@@ -27,7 +28,6 @@ Node::Node(std::unique_ptr<GameBoard> state, Node* const parent,
 	  alpha{alpha},
 	  beta{beta},
 	  maximizer{maximizer},
-	  bestChildValue{maximizer ? Heuristic::min() : Heuristic::max()},
 	  nextNodeMove{0, 0},
 	  bestChild{nullptr}
 {
@@ -105,24 +105,19 @@ void Node::expandNextNode(queue<Node>& fringe)
 
 Heuristic Node::getValue() const
 {
-	if ((parent && (depth == 0)) || isTerminalState())
+	if (parent && ((depth == 0) || isTerminalState()))
 	{
 		return parent->state->getHeuristic(*action);
 	}
-	else if (maximizer)
-	{
-		return beta;
-	}
-	else
-	{
-		return alpha;
-	}
+
+	return maximizer ? alpha : beta;
 }
 
 void Node::updateParent()
 {
 	if (parent)
 	{
+		//cout << "Node " << this << ": Updating parent from " << *action << endl;
 		parent->update(*this);
 	}
 }
@@ -131,20 +126,24 @@ void Node::update(const Node& child)
 {
 	if (maximizer)
 	{
-		if (child.getValue() > bestChildValue)
+		// the value of a maximizer node is the highest
+		// value of any of its children. It stores this
+		// value as its alpha.
+		if (child.getValue() > alpha)
 		{
-			bestChildValue = child.getValue();
+			alpha = child.getValue();
 			bestChild = &child;
-			alpha = std::max(alpha, bestChildValue);
 		}
 	}
 	else
 	{
-		if (child.getValue() < bestChildValue)
+		// The value of a minimizer node is the lowest
+		// value of any of its children. It stores this
+		// value as its beta.
+		if (child.getValue() < beta)
 		{
-			bestChildValue = child.getValue();
+			beta = child.getValue();
 			bestChild = &child;
-			beta = std::min(beta, bestChildValue);
 		}
 	}
 }

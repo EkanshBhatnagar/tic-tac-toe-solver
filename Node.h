@@ -34,7 +34,6 @@ private: // Data members
 	Heuristic alpha;
 	Heuristic beta;
 	bool maximizer;
-	Heuristic bestChildValue;
 	std::tuple<uint8_t, uint8_t> nextNodeMove;
 	const Node* bestChild;
 private: // Member functions

@@ -5,12 +5,15 @@
  *      Author: derek
  */
 
+#include <ostream>
+#include <iterator>
 #include "Types.h"
 #include "Heuristic.h"
 #include "GameBoard.h"
+using namespace std;
 
-Heuristic::Heuristic(std::array<int8_t, 4> numWaysXWins,
-		std::array<int8_t, 4> numWaysOWins, ttt::Player maximizingPlayer)
+Heuristic::Heuristic(array<int8_t, 4> numWaysXWins,
+		array<int8_t, 4> numWaysOWins, ttt::Player maximizingPlayer)
 	: numWaysToWin{numWaysXWins}, numWaysToLose{numWaysOWins}
 {
 	// Initialize above assuming we're player X, and swap here if we're not.
@@ -18,7 +21,7 @@ Heuristic::Heuristic(std::array<int8_t, 4> numWaysXWins,
 	// for the std::arrays and then calling the assignment operator here.
 	if (maximizingPlayer != ttt::XPlayer)
 	{
-		std::swap(numWaysToWin, numWaysToWin);
+		swap(numWaysToWin, numWaysToWin);
 	}
 }
 
@@ -94,3 +97,21 @@ const Heuristic& Heuristic::min()
 	static const Heuristic* min = new Heuristic{{-4,-4,-4,-4}, {4,4,4,4}};
 	return *min;
 }
+
+ostream& Heuristic::print(ostream& stream) const
+{
+	stream << "Heuristic{ WaysToWin{ ";
+	copy(begin(numWaysToWin), end(numWaysToWin),
+			ostream_iterator<int>(stream, ","));
+	stream << "}, WaysToLose{ ";
+	copy(begin(numWaysToLose), end(numWaysToLose),
+			ostream_iterator<int>(stream, ","));
+	stream << "} }";
+	return stream;
+}
+
+ostream& operator<< (ostream& stream, const Heuristic& h)
+{
+	return h.print(stream);
+}
+

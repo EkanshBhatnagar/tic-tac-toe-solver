@@ -12,6 +12,7 @@ class GameBoard;
 #include "Types.h"
 #include <cstdint>
 #include <array>
+#include <iosfwd>
 
 class Heuristic {
 public:
@@ -20,6 +21,7 @@ public:
 			ttt::Player maximizingPlayer = ttt::Player::XPlayer);
 	friend bool operator==(const Heuristic& lhs, const Heuristic& rhs);
 	friend bool operator<(const Heuristic& lhs, const Heuristic& rhs);
+	std::ostream& print(std::ostream& stream) const;
 	static const Heuristic& max();
 	static const Heuristic& min();
 
@@ -34,5 +36,7 @@ bool operator<(const Heuristic& lhs, const Heuristic& rhs);
 bool operator>(const Heuristic& lhs, const Heuristic& rhs);
 bool operator<=(const Heuristic& lhs, const Heuristic& rhs);
 bool operator>=(const Heuristic& lhs, const Heuristic& rhs);
+
+std::ostream& operator<< (std::ostream& stream, const Heuristic& h);
 
 #endif /* HEURISTIC_H_ */

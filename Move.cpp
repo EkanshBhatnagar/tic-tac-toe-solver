@@ -31,7 +31,14 @@ ostream& Move::print(ostream& stream) const
 	return stream << "Move{" << +x << "," << +y << "}";
 }
 
-ostream& operator<< (ostream& stream, const Move& move)
+ostream& operator<<(ostream& stream, const Move& move)
 {
 	return move.print(stream);
+}
+
+Move& Move::operator=(const Move& rhs)
+{
+	x = rhs.x;
+	y = rhs.y;
+	return *this;
 }

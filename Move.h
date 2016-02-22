@@ -16,10 +16,11 @@ struct Move final {
 	uint8_t x;
 	uint8_t y;
 	std::ostream& print(std::ostream& stream) const;
+	Move& operator=(const Move& rhs);
 };
 
 bool operator==(const Move& lhs, const Move& rhs);
 bool operator!=(const Move& lhs, const Move& rhs);
-std::ostream& operator<< (std::ostream& stream, const Move& move);
+std::ostream& operator<<(std::ostream& stream, const Move& move);
 
 #endif /* MOVE_H_ */
